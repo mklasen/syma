@@ -1,0 +1,7 @@
+environments/C7
+environments/Crawler/www
+node_modules
+vendor
+.DS_Store
+Environments/WordPress/www
+Environments/WordPressNative/www/
