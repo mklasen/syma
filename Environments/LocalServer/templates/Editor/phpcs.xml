@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<ruleset>
+	<description>Syma Devkit Sample PHPCS</description>
+
+	<file>.</file>
+
+	<!-- Exclude Composer vendor directory. -->
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+
+	<!-- Only check PHP files. -->
+	<arg name="extensions" value="php"/>
+
+	<!-- Show progress, show the error codes for each message (source). -->
+	<arg value="ps"/>
+
+	<!-- Strip the filepaths down to the relevant bit. -->
+	<arg name="basepath" value="."/>
+
+	<!-- Check up to 8 files simultaneously. -->
+	<arg name="parallel" value="8"/>
+
+	<rule ref="WordPress"/>
+
+	<rule ref="PHPCompatibility"/>
+
+	<!-- Enforce PSR1 compatible namespaces. -->
+	<rule ref="PSR1.Classes.ClassDeclaration"/>
+
+	<!-- Enforce that classes are abstract or final. -->
+	<rule ref="Universal.Classes.RequireFinalClass"/>
+
+</ruleset>
