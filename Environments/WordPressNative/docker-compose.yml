@@ -1,0 +1,61 @@
+services:
+  php-fpm:
+    build:
+      context: .
+      dockerfile: ../LocalServer/templates/WordPress/Dockerfile
+    container_name: "syma-wp"
+    restart: always
+    volumes:
+      - "./www:/var/www/html"
+      - "../LocalServer/templates/WordPress/php/custom.ini:/usr/local/etc/php/conf.d/z-custom.ini"
+
+  nginx:
+    image: nginx:latest
+    container_name: "syma-nginx"
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wordpressnative.rule=Host(`wordpressnative.cy`)"
+      - "traefik.http.routers.wordpressnative.entrypoints=websecure"
+      - "traefik.http.routers.wordpressnative.tls=true"
+    volumes:
+      - "../LocalServer/templates/WordPress/nginx/nginx.conf:/etc/nginx/conf.d/default.conf"
+      - "./www:/var/www/html"
+    links:
+      - php-fpm
+
+  db:
+    image: mariadb:latest
+    container_name: "syma-db"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  editor:
+    container_name: "syma-editor"
+    build:
+      context: .
+      dockerfile: ../LocalServer/templates/Editor/Dockerfile
+    command: tail -f /dev/null
+    volumes:
+      - ./www:/www
+      - ../LocalServer/templates/Editor/phpcs.xml:/www/phpcs.xml
+
+  # phpstan:
+  #   image: ghcr.io/phpstan/phpstan
+  #   volumes:
+  #     - ./www:/app
+
+volumes:
+  db_data:
+
+networks:
+  default:
+    name: syma
+    external: true
